@@ -26,5 +26,5 @@ stages:
           azureSubscription: 'ADO'
           scriptType: 'pscore'
           scriptLocation: 'scriptPath'
-          scriptPath: '$(Build.SourceDirectory)/.scripts/ImageScanSummaryAssessmentGate.ps1'
+          scriptPath: '$(Build.SourcesDirectory)/.scripts/ImageScanSummaryAssessmentGate.ps1'
           arguments: '-registryName acrdev001jsb -repository acrdev001jsb.azurecr.io -tag $(Build.BuildId)'
