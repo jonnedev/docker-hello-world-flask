@@ -1,5 +1,5 @@
 trigger:
-- main
+- none
 
 pool:
   vmImage: ubuntu-latest
@@ -28,3 +28,9 @@ stages:
           scriptLocation: 'scriptPath'
           scriptPath: '$(Build.SourcesDirectory)/.scripts/ImageScanSummaryAssessmentGate.ps1'
           arguments: '-registryName acrdev001jsb -repository acrdev001jsb.azurecr.io -tag $(Build.BuildId)'
+  
+- stage: DeployDev
+  jobs:
+    - job: DeployDev
+      steps:
+        - 
