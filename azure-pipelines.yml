@@ -4,6 +4,12 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  IMAGE_REGISTRY: 'ACR'
+  IMAGE_REPOSITORY: 'acrdev001jsb.azurecr.io'
+  TAG: '$(Build.BuildId)'
+  AZURE_SUBSCRIPTION: 'ADO'
+
 stages:
 - stage: BuildApp 
   jobs:
@@ -11,11 +17,11 @@ stages:
       steps: 
       - task: Docker@2
         inputs:
-          containerRegistry: 'ACR'
-          repository: 'acrdev001jsb.azurecr.io'
+          containerRegistry: '$(IMAGE_REGISTRY)'
+          repository: '$(IMAGE_REPOSITORY)'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
-          tags: '$(Build.BuildId)'
+          tags: '$(TAG)'
 
 - stage: ScanImage
   jobs:
@@ -23,7 +29,7 @@ stages:
       steps:
       - task: AzureCLI@2
         inputs:
-          azureSubscription: 'ADO'
+          azureSubscription: '$(AZURE_SUBSCRIPTION)'
           scriptType: 'pscore'
           scriptLocation: 'scriptPath'
           scriptPath: '$(Build.SourcesDirectory)/.scripts/ImageScanSummaryAssessmentGate.ps1'
@@ -33,4 +39,12 @@ stages:
   jobs:
     - job: DeployDev
       steps:
-        - 
+        - task: AzureRmWebAppDeployment@4
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: '$(AZURE_SUBSCRIPTION)'
+            appType: 'webAppContainer'
+            WebAppName: 'webappcontainerjsb001'
+            DockerNamespace: '$(IMAGE_REGISTRY)'
+            DockerRepository: '$(IMAGE_REPOSITORY)'
+            DockerImageTag: '$(TAG)'
